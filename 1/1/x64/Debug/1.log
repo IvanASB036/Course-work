@@ -1,0 +1,4 @@
+﻿  1.cpp
+D:\project\course work\1\1\1.cpp(108,17): warning C4101: pfind: неиспользованная локальная переменная
+D:\project\course work\1\1\1.cpp(111,42): warning C4101: newNumber_Students: неиспользованная локальная переменная
+  1.vcxproj -> D:\project\course work\1\x64\Debug\1.exe
