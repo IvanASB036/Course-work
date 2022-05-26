@@ -101,7 +101,7 @@ int main()
                     << "Номер аудитории - " << pnew->aud << endl
                     << "Номер корпуса - " << pnew->body << endl
                     << "Количество студентов - " << pnew->styd << endl
-                    << "ФИО декана - " << pnew->dek << endl;
+                    << "ФИО декана - " << pnew->dek << endl << endl;
                 pnew = pnew->next;
             }
             break;
