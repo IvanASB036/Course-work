@@ -7,49 +7,49 @@ void RUS()
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 };//Русский язык
-// описание динамической структуры 
-struct Node
+
+struct Faculty
 {
     string name;    // название факультета
     int aud;        // номер аудитории
     int body;       // номер корпуса
     int styd;       // кол-во студентов
     string dek;     //ФИО декана
-    Node* next;
-    Node* prev;
+    Faculty* next;
+    Faculty* prev;
 };
-typedef Node* PNode;
-// Создание элемента списка 
-PNode CreateNode(string Newname, int Newaud, int Newbody, int Newstyd, string Newdek)
+typedef Faculty* PFaculty;
+// Создание нового элемента
+PFaculty CreateFaculty(string Newname, int Newaud, int Newbody, int Newstyd, string Newdek)
 {
-    PNode NewNode = new Node;
-    NewNode->name = Newname;
-    NewNode->aud = Newaud;
-    NewNode->body = Newbody;
-    NewNode->styd = Newstyd;
-    NewNode->dek = Newdek;
-    NewNode->next = NULL;
-    NewNode->prev = NULL;
-    return NewNode;
+    PFaculty NewFaculty = new Faculty;
+    NewFaculty->name = Newname;
+    NewFaculty->aud = Newaud;
+    NewFaculty->body = Newbody;
+    NewFaculty->styd = Newstyd;
+    NewFaculty->dek = Newdek;
+    NewFaculty->next = NULL;
+    NewFaculty->prev = NULL;
+    return NewFaculty;
 }
 
-void AddFirst(PNode& Head, PNode& Tail, PNode NewNode)
+void AddFirst(PFaculty& Head, PFaculty& Tail, PFaculty NewFaculty)
 {
-    NewNode->next = Head;
-    NewNode->prev = NULL;
+    NewFaculty->next = Head;
+    NewFaculty->prev = NULL;
     if (Head != NULL)
-        Head->prev = NewNode;
-    Head = NewNode;
+        Head->prev = NewFaculty;
+    Head = NewFaculty;
     if (Tail == NULL) Tail = Head;
 }
 
-void AddLast(PNode& Head, PNode& Tail, PNode NewNode)
+void AddLast(PFaculty& Head, PFaculty& Tail, PFaculty NewFaculty)
 {
-    NewNode->prev = Tail;
-    NewNode->next = NULL;
+    NewFaculty->prev = Tail;
+    NewFaculty->next = NULL;
     if (Tail != NULL)
-        Tail->next = NewNode;
-    Tail = NewNode;
+        Tail->next = NewFaculty;
+    Tail = NewFaculty;
     if (Head == NULL) Head = Tail;
 
 }
@@ -57,9 +57,9 @@ void AddLast(PNode& Head, PNode& Tail, PNode NewNode)
 int main()
 {
     RUS();
-    PNode Head = NULL, Tail = NULL;
-    PNode pnew, pfind;
-    int t;
+    PFaculty Head = NULL, Tail = NULL;
+    PFaculty pnew, pfind;
+    int t, Fnumber = 0;
     string new_name;    // название факультета
     int new_aud;        // номер аудитории
     int new_body;       // номер корпуса
@@ -82,21 +82,26 @@ int main()
             cout << "Введите количество студентов - " << endl; cin >> new_styd;
             cout << "Введите ФИО декана - " << endl; cin >> new_dek;
 
-            pnew = CreateNode(new_name, new_aud, new_body, new_styd, new_dek); // создаем новый узел
+            pnew = CreateFaculty(new_name, new_aud, new_body, new_styd, new_dek); // создаем новый узел
             if (Head == NULL)
                 AddFirst(Head, Tail, pnew);    //вставляем на первое место 
             else
                 AddLast(Head, Tail, pnew);    //вставляем в конец списка
             break;
         case 2:
+            cout << endl << "Вывод списка факультетов" << endl;
             pnew = Head;  // вывод списка на экран
+
             while (pnew != NULL)
             {
-                cout << pnew->name << "\t"
-                    << pnew->aud << "\t"
-                    << pnew->body << "\t"
-                    << pnew->styd << "\t"
-                    << pnew->dek << endl;
+                Fnumber++;
+                cout
+                    << "Факультет № " << Fnumber << endl
+                    << "Название Факультета - " << pnew->name << endl
+                    << "Номер аудитории - " << pnew->aud << endl
+                    << "Номер корпуса - " << pnew->body << endl
+                    << "Количество студентов - " << pnew->styd << endl
+                    << "ФИО декана - " << pnew->dek << endl;
                 pnew = pnew->next;
             }
             break;
