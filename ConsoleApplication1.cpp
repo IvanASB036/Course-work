@@ -67,10 +67,11 @@ int main()
     string new_dek;     //ФИО декана
     do
     {
-        cout << "введите от 1 до 5 или 0 - выход" << endl;
+        cout << "Выберете действие" << endl;
         cout << " 0 - выход " << endl;
         cout << " 1 - добавить новый элемент в конец списка " << endl;
-        cout << " 2 - вывод списка " << endl;
+        cout << " 2 - добавить новый элемент в начало списка " << endl;
+        cout << " 3 - вывод списка " << endl;
         cout << endl;
         cin >> t;
         switch (t)
@@ -89,9 +90,19 @@ int main()
                 AddLast(Head, Tail, pnew);    //вставляем в конец списка
             break;
         case 2:
+            cout << "введите новое название факультета - " << endl; cin >> new_name;
+            cout << "Введите номер аудитории - " << endl; cin >> new_aud;
+            cout << "Введите номер корпуса - " << endl; cin >> new_body;
+            cout << "Введите количество студентов - " << endl; cin >> new_styd;
+            cout << "Введите ФИО декана - " << endl; cin >> new_dek;
+
+            pnew = CreateFaculty(new_name, new_aud, new_body, new_styd, new_dek); // создаем новый узел
+            AddFirst(Head, Tail, pnew);    //вставляем на первое место 
+            break;
+        case 3:
             cout << endl << "Вывод списка факультетов" << endl;
             pnew = Head;  // вывод списка на экран
-
+            Fnumber = 0;
             while (pnew != NULL)
             {
                 Fnumber++;
