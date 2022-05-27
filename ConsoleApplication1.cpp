@@ -1,13 +1,17 @@
-﻿#include <iostream>
+﻿//Библиотеки
+#include <iostream>
 #include <string>
 #include<Windows.h>
 using namespace std;
+
+//Добавление русского языка
 void RUS()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-};//Русский язык
+};
 
+//Структура
 struct Faculty
 {
     string name;    // название факультета
@@ -19,6 +23,7 @@ struct Faculty
     Faculty* prev;
 };
 typedef Faculty* PFaculty;
+
 // Создание нового элемента
 PFaculty CreateFaculty(string Newname, int Newaud, int Newbody, int Newstyd, string Newdek)
 {
@@ -33,6 +38,7 @@ PFaculty CreateFaculty(string Newname, int Newaud, int Newbody, int Newstyd, str
     return NewFaculty;
 }
 
+//Добавить в начало списка
 void AddFirst(PFaculty& Head, PFaculty& Tail, PFaculty NewFaculty)
 {
     NewFaculty->next = Head;
@@ -43,6 +49,7 @@ void AddFirst(PFaculty& Head, PFaculty& Tail, PFaculty NewFaculty)
     if (Tail == NULL) Tail = Head;
 }
 
+//Добавить в конец списка
 void AddLast(PFaculty& Head, PFaculty& Tail, PFaculty NewFaculty)
 {
     NewFaculty->prev = Tail;
@@ -54,17 +61,36 @@ void AddLast(PFaculty& Head, PFaculty& Tail, PFaculty NewFaculty)
 
 }
 
+//Добавление после заданного
+void AddAfter(PFaculty& Head, PFaculty& Tail, PFaculty p, PFaculty NewFaculty)
+{
+    if (p->next == NULL)
+        AddLast(Head, Tail, NewFaculty);
+    else
+    {
+        NewFaculty->next = p->next;
+        NewFaculty->prev = p;
+        p->next->prev = NewFaculty;
+        p->next = NewFaculty;
+    }
+}
+
+
+//Главная функция
 int main()
 {
     RUS();
     PFaculty Head = NULL, Tail = NULL;
     PFaculty pnew, pfind;
-    int t, Fnumber = 0;
+    
+
     string new_name;    // название факультета
     int new_aud;        // номер аудитории
     int new_body;       // номер корпуса
     int new_styd;       // кол-во студентов
     string new_dek;     //ФИО декана
+
+    int t; // Переменная для switсh
     do
     {
         cout << "Выберете действие" << endl;
@@ -102,7 +128,7 @@ int main()
         case 3:
             cout << endl << "Вывод списка факультетов" << endl;
             pnew = Head;  // вывод списка на экран
-            Fnumber = 0;
+            int Fnumber = 0;
             while (pnew != NULL)
             {
                 Fnumber++;
