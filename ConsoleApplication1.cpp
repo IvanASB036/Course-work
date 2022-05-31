@@ -203,10 +203,10 @@ int main()
             break;
 
         case 6:
-
-            DeleteFaculty(Head, Tail, pnew);
-            break;
-
+            /*
+                        DeleteFaculty(Head, Tail, pnew);
+                        break;
+                        */
         case 7:
 
             fout.open("Faculty List.bin");
