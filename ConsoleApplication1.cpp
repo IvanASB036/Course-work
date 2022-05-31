@@ -1,5 +1,6 @@
 ﻿//Библиотеки
 #include <iostream>
+#include <fstream>
 #include <string>
 #include<Windows.h>
 using namespace std;
@@ -63,7 +64,8 @@ void AddLast(PFaculty& Head, PFaculty& Tail, PFaculty NewFaculty)
 }
 
 //Добавление после заданного
-void AddAfter(PFaculty& Head, PFaculty& Tail, PFaculty pos, PFaculty NewFaculty)
+/*
+void AddAfter(PFaculty& Head, PFaculty& Tail, PFaculty NewFaculty, PFaculty pos)
 {
     if (pos->next == NULL)
         AddLast(Head, Tail, NewFaculty);
@@ -74,7 +76,8 @@ void AddAfter(PFaculty& Head, PFaculty& Tail, PFaculty pos, PFaculty NewFaculty)
         pos->next->prev = NewFaculty;
         pos->next = NewFaculty;
     }
-}
+}*/
+
 //Удаление
 void DeleteFaculty(PFaculty& Head, PFaculty& Tail, PFaculty OldFaculty)
 {
@@ -96,16 +99,29 @@ void DeleteFaculty(PFaculty& Head, PFaculty& Tail, PFaculty OldFaculty)
     }
     delete OldFaculty;
 }
+/*
+void EnterFile(int num,Faculty b[])
+{
+    ofstream outfile;
+    outfile.open("Out.bin", ios_base::binary);
+    for (int i = 0; i < num; ++i)
+        outfile << b[i].name << "\t" << b[i].aud << "\t " << b[i].body << "\t " << b[i].styd << "\t " << b[i].dek << endl;
+
+}
+
+void ReadFile(int num, Faculty b[])
+{
 
 
+}
+*/
 
-//Главная функция
+//Главная функция 
 int main()
 {
     RUS();
     PFaculty Head = NULL, Tail = NULL;
-    PFaculty pnew, pfind;
-
+    PFaculty pnew, pos, Read;
 
     string new_name;    // название факультета
     int new_aud;        // номер аудитории
@@ -113,17 +129,20 @@ int main()
     int new_styd;       // кол-во студентов
     string new_dek;     //ФИО декана
     int allstyd = 0;//Подсчет всех студентов
-    int t; // Переменная для switсh
-
+    int t = 0, num = 0; // Переменная для switсh
+    int max = 0, min = 999, sh = 0, max1, min1;
+    Faculty* b = new Faculty[num];
+    ofstream fout;
+    ifstream fclt;
     do
     {
-
+        cout << "Структу введено: " << num << endl;
         cout << "Выберете действие" << endl;
         cout << " 0 - выход " << endl;
         cout << " 1 - добавить новый элемент в конец списка " << endl;
         cout << " 2 - добавить новый элемент в начало списка " << endl;
         cout << " 4 - добавить новый элемент после заданного элемента (В разработке) " << endl;
-        cout << " 5 - добавить новый элемент после заданного элемента(В разработке) " << endl;
+        cout << " 5 - добавить новый элемент  заданного элемента(В разработке) " << endl;
         cout << " 6 - удаление данных о выбранном факультете(В разработке) " << endl;
         cout << " 7 - сохранение данных списка факультетов в бинарный файл(В разработке) " << endl;
         cout << " 8 - извлечение данных из бинарного файла и помещение новых факультетов в список(В разработке) " << endl;
@@ -146,6 +165,7 @@ int main()
             pnew = CreateFaculty(new_name, new_aud, new_body, new_styd, new_dek); // создаем новый узел
             AddLast(Head, Tail, pnew);
             cout << endl << "**********************************************" << endl;
+            num++;
             break;
 
             //Добавить в начало
@@ -158,10 +178,20 @@ int main()
             pnew = CreateFaculty(new_name, new_aud, new_body, new_styd, new_dek); // создаем новый узел
             AddFirst(Head, Tail, pnew);
             cout << endl << "**********************************************" << endl;
+            num++;
             break;
 
         case 3:
-            cout << "Функция в разработке";
+            /*cout << "Введите позицию - "; cin >> pos;
+            cout << "введите новое название факультета - " << endl; cin >> new_name;
+            cout << "Введите номер аудитории - " << endl; cin >> new_aud;
+            cout << "Введите номер корпуса - " << endl; cin >> new_body;
+            cout << "Введите количество студентов - " << endl; cin >> new_styd;
+            cout << "Введите ФИО декана - " << endl; cin >> new_dek;
+            pnew = CreateFaculty(new_name, new_aud, new_body, new_styd, new_dek); // создаем новый узел
+            AddAfter(Head, Tail, pnew, pos);
+            cout << endl << "**********************************************" << endl;
+            num++;*/
             break;
 
         case 4:
@@ -173,17 +203,39 @@ int main()
             break;
 
         case 6:
-            cout << "Функция в разработке";
+
+            DeleteFaculty(Head, Tail, pnew);
             break;
 
         case 7:
-            cout << "Функция в разработке";
-            break;
 
+            fout.open("Faculty List.bin");
+            if (!fout.is_open())
+            {
+                cout << "Ошибка открытия файла!";
+            }
+            else
+            {
+                cout << "Файл открыт";
+
+                fout.write((char*)&Read, sizeof(Faculty));
+            }
+            fout.close();
+            break;
         case 8:
-            cout << "Функция в разработке";
-            break;
+            /*
+             fout.open("Faculty List.bin", ios::binary);
 
+             if (!fout.is_open())
+             {
+                 cout << "Ошибка открытия файла";
+             }
+             else
+             {
+                 fclt .getline(fclt, sizeof(Faculty));
+             }
+             fout.close();*/
+            break;
         case 9:
             cout << "Функция в разработке";
             break;
@@ -201,10 +253,30 @@ int main()
             cout << endl << "**********************************************" << endl;
             break;
 
-
+            //Вывод минимальног и максимального
         case 11:
-            cout << "Функция в разработке";
+            cout << "Наибольшее и наименьшее количество студентов:" << endl;
+            pnew = Head;
+            while (pnew != NULL)
+            {
+                sh++;
+                if (pnew->styd > max)
+                {
+                    max1 = sh;
+                    max = pnew->styd;
+                }
+                if (pnew->styd < min)
+                {
+                    min1 = sh;
+                    min = pnew->styd;
+                }
+
+                pnew = pnew->next;
+            }
+            cout << "Max - " << max << " Min - " << min << endl;
+            cout << endl << "**********************************************" << endl;
             break;
+
 
             //Вывод всей стуктуры
         case 12:
