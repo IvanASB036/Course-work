@@ -291,7 +291,7 @@ int main()
             cout << "**********************************************" << endl;
             break;
 
-            //Вывод общее кол-во студентов
+            //Вывод мин и  мах
         case 10:
             cout << "Наибольшее и наименьшее количество студентов:" << endl;
             pnew = Head;
@@ -311,11 +311,34 @@ int main()
 
                 pnew = pnew->next;
             }
-            cout << "Max - " << max << " Min - " << min << endl;
+            cout << "Наибольшее - " << max << " Наименьшее - " << min << endl;
+
+            while (pnew != NULL)
+            {
+                if (pnew->styd == max)
+                {
+                    cout
+                        << "Название Факультета - " << pnew->name << endl
+                        << "Номер аудитории - " << pnew->aud << endl
+                        << "Номер корпуса - " << pnew->body << endl
+                        << "Количество студентов - " << pnew->styd << endl
+                        << "ФИО декана - " << pnew->dek << endl << endl;
+                }
+                if (pnew->styd == min)
+                {
+                    cout
+                        << "Название Факультета - " << pnew->name << endl
+                        << "Номер аудитории - " << pnew->aud << endl
+                        << "Номер корпуса - " << pnew->body << endl
+                        << "Количество студентов - " << pnew->styd << endl
+                        << "ФИО декана - " << pnew->dek << endl << endl;
+                }
+                pnew = pnew->next;
+            }
             cout << "**********************************************" << endl;
             break;
 
-            //Вывод минимальног и максимального
+            //Вывод всего списка
         case 11:
             cout << endl << "Вывод списка факультетов" << endl;
             pnew = Head;
