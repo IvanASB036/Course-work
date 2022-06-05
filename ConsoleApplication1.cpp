@@ -313,6 +313,8 @@ int main()
             }
             cout << "Наибольшее - " << max << " Наименьшее - " << min << endl;
 
+
+
             while (pnew != NULL)
             {
                 if (pnew->styd == max)
