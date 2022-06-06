@@ -121,22 +121,13 @@ PFaculty CinFaculty()
 {
 	int aud, body, styd;
 	string name, dek, departure, arrival;
-
-	cout << "Введите уникальное название факультета: ";
-	cin >> name;
-
-	cout << "Введите номер аудитории: ";
-	cin >> aud; cin.ignore();
-
-	cout << "Введите номер корпуса: ";
-	cin >> body; cin.ignore();
-
-	cout << "Введите количество студентов: ";
-	cin >> styd; cin.ignore();
-
-	cout << "Введите ФИО декана: ";
-	cin >> dek;
-
+	cout << "Введите уникальное название факультета: "; cin >> name;
+	cout << "Введите номер аудитории: "; cin >> aud; cin.ignore();
+	cout << "Введите номер корпуса: "; cin >> body; cin.ignore();
+	cout << "Введите количество студентов: "; cin >> styd; cin.ignore();
+	cout << "Введите ФИО декана: "; cin >> dek;
+	cout << "Новый фаультет добавлен!" << endl
+		<< "**********************************************" << endl;
 	return CreateFaculty(name, aud, body, styd, dek);
 }
 
@@ -147,9 +138,7 @@ PFaculty FindFacultyById(PFaculty& Head, string name)
 	do
 	{
 		if (pnew->name == name)
-		{
 			return pnew;
-		}
 		pnew = pnew->next;
 	} while (pnew != NULL);
 	cout << "Факультет с таким названием не найден." << endl;
@@ -164,25 +153,26 @@ int main()
 	PFaculty pnew, pos = NULL;
 	Faculty FCLT;
 	string nameToFind, nameToDel;
-	int t = 0;
+	int t = 0, num = 0;
 	do
 	{
 		//Меню
 		{
-			cout << "Выберете действие" << endl;
-			cout << " 0 - выход " << endl;
-			cout << " 1 - добавить новый элемент в начало списка " << endl;
-			cout << " 2 - добавить новый элемент в конец списка " << endl;
-			cout << " 3 - добавить новый элемент после заданного элемента " << endl;
-			cout << " 4 - добавить новый элемент перед заданным элементом " << endl;
-			cout << " 5 - удаление данных о выбранном факультете " << endl;
-			cout << " 6 - сохранение данных списка факультетов в бинарный файл " << endl;
-			cout << " 7 - извлечение данных из бинарного файла и помещение новых факультетов в список " << endl;
-			cout << " 8 - Сведения о факультетах расположенных в первом корпусе на третьем этаже " << endl;
-			cout << " 9 - Рассчитать общее количество студентов со всех факультетов " << endl;
-			cout << " 10 - Вывод наименьшего и наибольшего количества студентов " << endl;
-			cout << " 11 - вывод всего списка " << endl;
-			cout << endl;
+			cout << "Факультетов введенно: " << num << endl
+				<< "Выберете действие" << endl
+				<< " 0 - выход " << endl
+				<< " 1 - добавить новый элемент в начало списка " << endl
+				<< " 2 - добавить новый элемент в конец списка " << endl
+				<< " 3 - добавить новый элемент после заданного элемента " << endl
+				<< " 4 - добавить новый элемент перед заданным элементом " << endl
+				<< " 5 - удаление данных о выбранном факультете " << endl
+				<< " 6 - сохранение данных списка факультетов в бинарный файл " << endl
+				<< " 7 - извлечение данных из бинарного файла и помещение новых факультетов в список " << endl
+				<< " 8 - Сведения о факультетах расположенных в первом корпусе на третьем этаже " << endl
+				<< " 9 - Рассчитать общее количество студентов со всех факультетов " << endl
+				<< " 10 - Вывод наименьшего и наибольшего количества студентов " << endl
+				<< " 11 - вывод всего списка " << endl
+				<< "Выборанное действие - ";
 			cin >> t;
 			cout << "**********************************************" << endl;
 		}//Меню
@@ -192,12 +182,14 @@ int main()
 		{
 			NewFaculty = CinFaculty();
 			AddFirst(Head, Tail, NewFaculty);
+			num++;
 			break;
 		}
 		case 2://Добавление в конец
 		{
 			NewFaculty = CinFaculty();
 			AddLast(Head, Tail, NewFaculty);
+			num++;
 			break;
 		}
 		case 3://Добавление после заданного
@@ -210,6 +202,7 @@ int main()
 			{
 				AddAfter(Head, Tail, FacultyToAddAfter, NewFaculty);
 			}
+			num++;
 			break;
 		}
 		case 4://Добавление перед заданным
@@ -222,6 +215,7 @@ int main()
 			{
 				AddBefore(Head, Tail, FacultyToAddBefore, NewFaculty);
 			}
+			num++;
 			break;
 		}
 		case 5://Удаление выбранного
@@ -235,6 +229,7 @@ int main()
 				{
 					Delete(Head, Tail, FacultyToDel);
 					cout << "Данные о факультете успешно удалёны!" << endl;
+					num--;
 				}
 			}
 			else
@@ -258,22 +253,24 @@ int main()
 						}
 					}
 				}
+				if (!ofile.eof())
+					cout << "Файл сохранён" << endl;
 			}
 			else
 				cout << "Список пустой, сохранять нечего!" << endl;
+			cout << "**********************************************" << endl;
 			break;
 		}
 		case 7://Чтение файла
 		{
+			int  body, aud, styd;
+			string name, dek;
 			pnew = Head;
 			ifstream file("FacultyList.bin", ios::binary | ios::in | ios::out);
 			if (file)
 			{
 				while (!file.eof())
 				{
-					int  body, aud, styd;
-					string name, dek;
-					//Название Факультета
 					file >> name;
 					file >> body;
 					file >> aud;
@@ -289,14 +286,17 @@ int main()
 				}
 			}
 			else
-				cout << "Файл не найден." << endl;
+				cout << "Файл не найден" << endl;
 		}
 		case 8://Информация о факультетах в 1 корпусе, 3 этаже
 		{
+			int x = 0;
 			pnew = Head;
 			while (pnew != NULL)
 			{
-				if ((pnew->body == 1) && ((pnew->aud - 300) < 100))
+				x = pnew->aud;
+				x = x - 300;
+				if (100 > x && 0 < x && (pnew->body == 1))
 					cout
 					<< "Название Факультета - " << pnew->name << endl
 					<< "Номер аудитории - " << pnew->aud << endl
@@ -324,31 +324,27 @@ int main()
 		}
 		case 10://Нахождение max и min
 		{
-			int sh = 0, min = 999, max = 0, max1, min1, x = 0;
+			int min = 999, max = 0, x = 0;
 			pnew = Head;
 			cout << "Наибольшее и наименьшее количество студентов:" << endl;
 			//Нахождение max и min
 			while (pnew != NULL)
 			{
-				sh++;
 				if (pnew->styd > max)
 				{
-					max1 = sh;
 					max = pnew->styd;
 				}
 				if (pnew->styd < min)
 				{
-					min1 = sh;
 					min = pnew->styd;
 				}
-
 				pnew = pnew->next;
 			}
 			cout << "Наибольшее - " << max << " Наименьшее - " << min << endl;
 			while (pnew != NULL)
 			{
 				pnew->styd = x;
-				if (max == x)
+				if (x == max)
 				{
 
 					cout << "Название Факультета - " << pnew->name << endl;
@@ -357,7 +353,7 @@ int main()
 					cout << "Количество студентов - " << pnew->styd << endl;
 					cout << "ФИО декана - " << pnew->dek << endl << endl;
 				}
-				if (min == x)
+				if (x == min)
 				{
 					cout << "Название Факультета - " << pnew->name << endl;
 					cout << "Номер аудитории - " << pnew->aud << endl;
@@ -393,6 +389,5 @@ int main()
 
 		}
 		}
-
 	} while (t != 0);
 };
