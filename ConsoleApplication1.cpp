@@ -1,365 +1,409 @@
-﻿//Библиотеки
-#include <iostream>
-#include <fstream>
+﻿#include <iostream>
+#include <cstdlib>
+#include <conio.h>
 #include <string>
-#include<Windows.h>
+#include <windows.h>
+#include <cmath>
+#include <fstream>
+
 using namespace std;
 
-//Добавление русского языка
 void RUS()
 {
-    SetConsoleCP(1251);
-    SetConsoleOutputCP(1251);
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 };
 
 //Структура
 struct Faculty
 {
-    string name;    // название факультета
-    int aud;        // номер аудитории
-    int body;       // номер корпуса
-    int styd;       // кол-во студентов
-    string dek;     //ФИО декана
+	string name;    // название факультета
+	int aud;        // номер аудитории
+	int body;       // номер корпуса
+	int styd;       // кол-во студентов
+	string dek;     //ФИО декана
 
-    Faculty* next;
-    Faculty* prev;
+
+	Faculty* prev;
+	Faculty* next;
 };
 typedef Faculty* PFaculty;
 
-// Создание нового элемента
+//Создание нового узла
 PFaculty CreateFaculty(string Newname, int Newaud, int Newbody, int Newstyd, string Newdek)
 {
-    PFaculty NewFaculty = new Faculty;
-    NewFaculty->name = Newname;
-    NewFaculty->aud = Newaud;
-    NewFaculty->body = Newbody;
-    NewFaculty->styd = Newstyd;
-    NewFaculty->dek = Newdek;
-    NewFaculty->next = NULL;
-    NewFaculty->prev = NULL;
-    return NewFaculty;
+	PFaculty NewFaculty = new Faculty;
+	NewFaculty->name = Newname;
+	NewFaculty->aud = Newaud;
+	NewFaculty->body = Newbody;
+	NewFaculty->styd = Newstyd;
+	NewFaculty->dek = Newdek;
+	NewFaculty->next = NULL;
+	NewFaculty->prev = NULL;
+	return NewFaculty;
 }
 
-//1. Добавить в начало списка
+//Добавить в начало
 void AddFirst(PFaculty& Head, PFaculty& Tail, PFaculty NewFaculty)
 {
-    NewFaculty->next = Head;
-    NewFaculty->prev = NULL;
-    if (Head != NULL)
-        Head->prev = NewFaculty;
-    Head = NewFaculty;
-    if (Tail == NULL) Tail = Head;
+	NewFaculty->next = Head;
+	NewFaculty->prev = NULL;
+	if (Head != NULL)
+		Head->prev = NewFaculty;
+	Head = NewFaculty;
+	if (Tail == NULL)
+		Tail = Head;
 }
 
-//2. Добавить в конец списка
+//Добавить перед заданным
+void AddBefore(PFaculty& Head, PFaculty& Tail, PFaculty P, PFaculty NewFaculty)
+{
+	if (P == Head)
+		AddFirst(Head, Tail, NewFaculty);
+	else
+	{
+		NewFaculty->next = P;
+		NewFaculty->prev = P->prev;
+		P->prev->next = NewFaculty;
+		P->prev = NewFaculty;
+	}
+}
+
+//Добавить последним
 void AddLast(PFaculty& Head, PFaculty& Tail, PFaculty NewFaculty)
 {
-    NewFaculty->prev = Tail;
-    NewFaculty->next = NULL;
-    if (Tail != NULL)
-        Tail->next = NewFaculty;
-    Tail = NewFaculty;
-    if (Head == NULL) Head = Tail;
-
+	NewFaculty->prev = Tail;
+	NewFaculty->next = NULL;
+	if (Tail != NULL)
+		Tail->next = NewFaculty;
+	Tail = NewFaculty;
+	if (Head == NULL)
+		Head = Tail;
 }
 
-//3. Добавление после заданного
-void AddAfter(PFaculty& Head, PFaculty& Tail, PFaculty pos, PFaculty NewFaculty)
+//Добавить после заданного
+void AddAfter(PFaculty& Head, PFaculty& Tail, PFaculty P, PFaculty NewFaculty)
 {
-    if (pos->next == NULL)
-        AddLast(Head, Tail, NewFaculty);
-    else
-    {
-        NewFaculty->next = pos->next;
-        NewFaculty->prev = pos;
-        pos->next->prev = NewFaculty;
-        pos->next = NewFaculty;
-    }
+	if (P->next == NULL)
+		AddLast(Head, Tail, NewFaculty);
+	else
+	{
+		NewFaculty->next = P->next;
+		NewFaculty->prev = P;
+		P->next->prev = NewFaculty;
+		P->next = NewFaculty;
+	}
 }
 
-//4. Добавить перед заданным
-void AddBefore(PFaculty& Head, PFaculty& Tail, PFaculty pos, PFaculty NewFaculty)
+//Удалить некий узел
+void Delete(PFaculty& Head, PFaculty& Tail, PFaculty D, bool fullDelete = true)
 {
-    if (pos == Head)
-        AddFirst(Head, Tail, NewFaculty);
-    else
-    {
-        NewFaculty->next = pos;
-        NewFaculty->prev = pos->prev;
-        pos->prev->next = NewFaculty;
-        pos->prev = NewFaculty;
-    }
+	PFaculty q = Head;
+	if (Head == D)
+	{
+		Head = D->next;
+		if (Head != NULL)
+			Head->prev = NULL;
+		else
+			Tail = NULL;
+	}
+	else
+	{
+		D->prev->next = D->next;
+		if (D->next != NULL)
+			D->next->prev = D->prev;
+		else
+			Tail = NULL;
+	}
+	if (fullDelete)
+		delete D;
 }
 
-//5. Удаление выбранного
-void DeleteFaculty(PFaculty& Head, PFaculty& Tail, PFaculty OldFaculty)
+//Отобразить один узел
+void OutputFaculty(PFaculty Faculty_Output)
 {
-    if (Head == OldFaculty)
-    {
-        Head = OldFaculty->next;
-        if (Head != NULL)
-            Head->prev = NULL;
-        else
-            Tail = NULL;
-    }
-    else
-    {
-        OldFaculty->prev->next = OldFaculty->next;
-        if (OldFaculty->next != NULL)
-            OldFaculty->next->prev = OldFaculty->prev;
-        else
-            Tail = NULL;
-    }
-    delete OldFaculty;
+	cout << "Название факультета: " << Faculty_Output->name << endl;
+	cout << "№ аудитории: " << Faculty_Output->aud << endl;
+	cout << "№ корпуса: " << Faculty_Output->body << endl;
+	cout << "Количество студентов: " << Faculty_Output->styd << endl;
+	cout << "Фамилия и инициалы декана: " << Faculty_Output->dek << endl << endl;
 }
 
-//6. Запись в файл
-void WriteFile(int num, Faculty FCLT)
+//Введение и создание узла
+PFaculty CinFaculty()
 {
-    ofstream ofile("FacultyList.bin", ios::binary);
-    for (int i = 0; i < num; i++)
-    {
-        ofile.write((char*)&FCLT, sizeof(Faculty));// 1-й блок
-    }
-    cout << "Файл сохранён";
-    ofile.close();// закрыть записанный файл
+	int aud, body, styd;
+	string name, dek, departure, arrival;
+
+	cout << "Введите уникальное название факультета: ";
+	cin >> name;
+
+	cout << "Введите номер аудитории: ";
+	cin >> aud; cin.ignore();
+
+	cout << "Введите номер корпуса: ";
+	cin >> body; cin.ignore();
+
+	cout << "Введите количество студентов: ";
+	cin >> styd; cin.ignore();
+
+	cout << "Введите ФИО декана: ";
+	cin >> dek;
+
+	return CreateFaculty(name, aud, body, styd, dek);
 }
 
-//7. Чтение из файла
-void ReadFile(Faculty FCLT)
+//Найти по имени
+PFaculty FindFacultyById(PFaculty& Head, string name)
 {
-    int Fnumber = 0;
-    ifstream file("FacultyList.bin", ios::binary | ios::in | ios::out);
-    file.seekg(0);           // вернуться к началу файла
-    while (!file.eof())
-    {
-        file.read((char*)&FCLT, sizeof(Faculty));
-        if (file.eof()) break;
-        Fnumber++;
-        cout
-            << "Факультет № " << Fnumber << endl
-            << "Название Факультета - " << FCLT.name << endl
-            << "Номер аудитории - " << FCLT.aud << endl
-            << "Номер корпуса - " << FCLT.body << endl
-            << "Количество студентов - " << FCLT.styd << endl
-            << "ФИО декана - " << FCLT.dek << endl << endl;
-
-
-    }
-    file.close();
+	PFaculty pnew = Head;
+	do
+	{
+		if (pnew->name == name)
+		{
+			return pnew;
+		}
+		pnew = pnew->next;
+	} while (pnew != NULL);
+	cout << "Автобус с таким ID не найден." << endl;
+	return NULL;
 }
 
-
-
-//Главная функция 
 int main()
 {
-    RUS();
-    PFaculty Head = NULL, Tail = NULL;
-    PFaculty pnew, pos = NULL;
-    Faculty FCLT;
+	RUS();
+	PFaculty NewFaculty;
+	PFaculty Head = NULL, Tail = NULL;
+	PFaculty pnew, pos = NULL;
+	Faculty FCLT;
+	string nameToFind, nameToDel;
+	int t = 0;
+	do
+	{
+		cout << "Выберете действие" << endl;
+		cout << " 0 - выход " << endl;
+		cout << " 1 - добавить новый элемент в начало списка " << endl;
+		cout << " 2 - добавить новый элемент в конец списка " << endl;
+		cout << " 3 - добавить новый элемент после заданного элемента " << endl;
+		cout << " 4 - добавить новый элемент перед заданным элементом " << endl;
+		cout << " 5 - удаление данных о выбранном факультете " << endl;
+		cout << " 6 - сохранение данных списка факультетов в бинарный файл " << endl;
+		cout << " 7 - извлечение данных из бинарного файла и помещение новых факультетов в список(В разработке) " << endl;
+		cout << " 8 - Сведения о факультетах расположенных в первом корпусе на третьем этаже(В разработке) " << endl;
+		cout << " 9 - Рассчитать общее количество студентов со всех факультетов " << endl;
+		cout << " 10 - Сведения о факультете с наименьшим и наибольшим количеством студентов (В разработке)" << endl;
+		cout << " 11 - вывод всего списка " << endl;
+		cout << endl;
+		cin >> t;
+		cout << "**********************************************" << endl;
+		switch (t)
+		{
 
-    string new_name;    // название факультета
-    int new_aud;        // номер аудитории
-    int new_body;       // номер корпуса
-    int new_styd;       // кол-во студентов
-    string new_dek;     //ФИО декана 
-    int allstyd = 0;//Подсчет всех студентов
-    int t = 0, num = 0, x; // Переменная для switсh
-    int max = 0, min = 999, sh = 0, max1, min1;
-    Faculty* b = new Faculty[num];
+		case 1:
+		{
+			NewFaculty = CinFaculty();
+			AddFirst(Head, Tail, NewFaculty);
+			break;
+		}
+		case 2:
+		{
+			NewFaculty = CinFaculty();
+			AddLast(Head, Tail, NewFaculty);
+			break;
+		}
+		case 3:
+		{
+			cout << "Введите название факультета, после которого нужно добавить новый: ";
+			cin >> nameToFind; cin.ignore();
+			NewFaculty = CinFaculty();
+			PFaculty FacultyToAddAfter = FindFacultyById(Head, nameToFind);
+			if (FacultyToAddAfter != NULL)
+			{
+				AddAfter(Head, Tail, FacultyToAddAfter, NewFaculty);
+			}
+			break;
+		}
+		case 4:
+		{
+			cout << "Введите название факультета, перед которым нужно добавить новый: ";
+			cin >> nameToFind; cin.ignore();
+			NewFaculty = CinFaculty();
+			PFaculty FacultyToAddBefore = FindFacultyById(Head, nameToFind);
+			if (FacultyToAddBefore != NULL)
+			{
+				AddBefore(Head, Tail, FacultyToAddBefore, NewFaculty);
+			}
+			break;
+		}
+		case 5:
+		{
+			if (Head != NULL)
+			{
+				cout << "Введите название факультета, который нужно удалить: ";
+				cin >> nameToDel; cin.ignore();
+				PFaculty FacultyToDel = FindFacultyById(Head, nameToDel);
+				if (FacultyToDel != NULL)
+				{
+					Delete(Head, Tail, FacultyToDel);
+					cout << "Данные о факультете успешно удалёны!" << endl;
+				}
+			}
+			else
+				cout << "Список пустой!" << endl;
+			break;
+		}
+		case 6:
+		{
+			if (Head != NULL)
+			{
+				ofstream ofile("FacultyList.bin", ios::binary);
+				if (ofile)
+				{
+					if (Head != NULL)
+					{
+						pnew = Head;
+						while (pnew != NULL)
+						{
+							ofile << pnew->name << '\n' << pnew->aud << '\n' << pnew->body << '\n' << pnew->styd << '\n' << pnew->dek << endl;
+							pnew = pnew->next;
+						}
+					}
+				}
+			}
+			else
+				cout << "Список пустой, сохранять нечего!" << endl;
+			break;
+		}
+		case 7:
+		{
+			pnew = Head;
+			ifstream file("FacultyList.bin", ios::binary | ios::in | ios::out);
+			if (file)
+			{
+				while (!file.eof())
+				{
+					int  body, aud, styd;
+					string name, dek;
+					//Название Факультета
+					file >> name;
+					file >> body;
+					file >> aud;
+					file >> styd;
+					file >> dek;
 
+					cout << "Название факультета - " << name << endl;
+					cout << "Номер корпуса - " << body << endl;
+					cout << "Номер аудитории - " << aud << endl;
+					cout << "Количество студентов - " << styd << endl;
+					cout << "ФИО декана - " << dek << endl;
+					cout << endl;
+				}
+			}
+			else
+				cout << "Файл BusesSave.txt не найден. Попробуйте расположить его в папке с исполняемым файлом." << endl;
+		}
+		case 8:
+		{
+			pnew = Head;
+			while (pnew != NULL)
+			{
+				if (pnew->body == 1 && (pnew->aud - 300) < 100)
+					cout
+					<< "Название Факультета - " << pnew->name << endl
+					<< "Номер аудитории - " << pnew->aud << endl
+					<< "Номер корпуса - " << pnew->body << endl
+					<< "Количество студентов - " << pnew->styd << endl
+					<< "ФИО декана - " << pnew->dek << endl
+					<< endl << endl;
+				pnew = pnew->next;
+			}
+			cout << "**********************************************" << endl;
+			break;
+		}
+		case 9:
+		{
+			int allstyd = 0;
+			pnew = Head;
+			while (pnew != NULL)
+			{
+				allstyd += pnew->styd;
+				pnew = pnew->next;
+			}
+			cout << "Общее количество студентов: " << allstyd << endl;
+			cout << "**********************************************" << endl;
+			break;
+		}
+		case 10:
+		{
+			int sh = 0, min = 999, max = 0, max1, min1, x = 0;
+			pnew = Head;
+			cout << "Наибольшее и наименьшее количество студентов:" << endl;
+			//Нахождение max и min
+			while (pnew != NULL)
+			{
+				sh++;
+				if (pnew->styd > max)
+				{
+					max1 = sh;
+					max = pnew->styd;
+				}
+				if (pnew->styd < min)
+				{
+					min1 = sh;
+					min = pnew->styd;
+				}
 
-    int Fnumber = 0;
-    do
-    {
-        cout << "Структу введено: " << num << endl;
-        cout << "Выберете действие" << endl;
-        cout << " 0 - выход " << endl;
-        cout << " 1 - добавить новый элемент в конец списка " << endl;
-        cout << " 2 - добавить новый элемент в начало списка " << endl;
-        cout << " 3 - добавить новый элемент после заданного элемента (В разработке) " << endl;
-        cout << " 4 - добавить новый элемент перед заданным элементом(В разработке) " << endl;
-        cout << " 5 - удаление данных о выбранном факультете(В разработке) " << endl;
-        cout << " 6 - сохранение данных списка факультетов в бинарный файл(В разработке) " << endl;
-        cout << " 7 - извлечение данных из бинарного файла и помещение новых факультетов в список(В разработке) " << endl;
-        cout << " 8 - Сведения о факультетах расположенных в первом корпусе на третьем этаже(В разработке) " << endl;
-        cout << " 9 - Рассчитать общее количество студентов со всех факультетов " << endl;
-        cout << " 10 - Сведения о факультете с наименьшим и наибольшим количеством студентов (В разработке)" << endl;
-        cout << " 11 - вывод всего списка " << endl;
-        cout << endl;
-        cin >> t;
-        cout << "**********************************************" << endl;
-        switch (t)
-        {
-            //Добавть в конец
-        case 1:
-            cout << "введите новое название факультета - " << endl; cin >> new_name;
-            cout << "Введите номер аудитории - " << endl; cin >> new_aud;
-            cout << "Введите номер корпуса - " << endl; cin >> new_body;
-            cout << "Введите количество студентов - " << endl; cin >> new_styd;
-            cout << "Введите ФИО декана - " << endl; cin >> new_dek;
-            pnew = CreateFaculty(new_name, new_aud, new_body, new_styd, new_dek); // создаем новый узел
-            AddLast(Head, Tail, pnew);
-            cout << "**********************************************" << endl;
-            num++;
-            break;
+				pnew = pnew->next;
+			}
+			cout << "Наибольшее - " << max << " Наименьшее - " << min << endl;
+			while (pnew != NULL)
+			{
+				pnew->styd = x;
+				if (max == x)
+				{
 
-            //Добавить в начало
-        case 2:
-            cout << "введите новое название факультета - " << endl; cin >> new_name;
-            cout << "Введите номер аудитории - " << endl; cin >> new_aud;
-            cout << "Введите номер корпуса - " << endl; cin >> new_body;
-            cout << "Введите количество студентов - " << endl; cin >> new_styd;
-            cout << "Введите ФИО декана - " << endl; cin >> new_dek;
-            pnew = CreateFaculty(new_name, new_aud, new_body, new_styd, new_dek); // создаем новый узел
-            AddFirst(Head, Tail, pnew);
-            cout << "**********************************************" << endl;
-            num++;
-            break;
+					cout << "Название Факультета - " << pnew->name << endl;
+					cout << "Номер аудитории - " << pnew->aud << endl;
+					cout << "Номер корпуса - " << pnew->body << endl;
+					cout << "Количество студентов - " << pnew->styd << endl;
+					cout << "ФИО декана - " << pnew->dek << endl << endl;
+				}
+				if (min == x)
+				{
+					cout << "Название Факультета - " << pnew->name << endl;
+					cout << "Номер аудитории - " << pnew->aud << endl;
+					cout << "Номер корпуса - " << pnew->body << endl;
+					cout << "Количество студентов - " << pnew->styd << endl;
+					cout << "ФИО декана - " << pnew->dek << endl << endl;
+				}
+				pnew = pnew->next;
+			}
+			cout << "**********************************************" << endl;
+			break;
+		}
+		case 11:
+		{
+			int Fnumber = 0;
+			cout << endl << "Вывод списка факультетов" << endl;
+			pnew = Head;
 
-            //Добавить после заданного
-        case 3:
-            /* cout << "Введите позицию - "; cin >> pos;
-             cout << "введите новое название факультета - " << endl; cin >> new_name;
-             cout << "Введите номер аудитории - " << endl; cin >> new_aud;
-             cout << "Введите номер корпуса - " << endl; cin >> new_body;
-             cout << "Введите количество студентов - " << endl; cin >> new_styd;
-             cout << "Введите ФИО декана - " << endl; cin >> new_dek;
-             pnew = CreateFaculty(new_name, new_aud, new_body, new_styd, new_dek); // создаем новый узел
-             AddAfter(Head, Tail, pos, pnew);
-             cout << endl << "**********************************************" << endl;
-             num++;
-             break;*/
+			while (pnew != NULL)
+			{
+				Fnumber++;
+				cout
+					<< "Факультет № " << Fnumber << endl
+					<< "Название Факультета - " << pnew->name << endl
+					<< "Номер аудитории - " << pnew->aud << endl
+					<< "Номер корпуса - " << pnew->body << endl
+					<< "Количество студентов - " << pnew->styd << endl
+					<< "ФИО декана - " << pnew->dek << endl << endl;
+				pnew = pnew->next;
+			}
+			cout << "**********************************************" << endl;
+			break;
 
-             //Добавить перед заданным
-        case 4:
-            cout << "Введите позицию - "; cin >> x;
-            cout << "введите новое название факультета - " << endl; cin >> new_name;
-            cout << "Введите номер аудитории - " << endl; cin >> new_aud;
-            cout << "Введите номер корпуса - " << endl; cin >> new_body;
-            cout << "Введите количество студентов - " << endl; cin >> new_styd;
-            cout << "Введите ФИО декана - " << endl; cin >> new_dek;
-            pnew = CreateFaculty(new_name, new_aud, new_body, new_styd, new_dek); // создаем новый узел
-            AddBefore(Head, Tail, pos, pnew);
-            cout << "**********************************************" << endl;
-            num++;
-            break;
+		}
+		}
 
-            //Удаление выбранного
-        case 5:
-            cout << "Функция в разработке";
-            break;
-
-            //запись в файл
-        case 6:
-            WriteFile(num, FCLT);
-            break;
-
-            //Чтение из файла
-        case 7:
-            ReadFile(FCLT);
-            break;
-
-        case 8:
-            pnew = Head;
-
-            while (pnew != NULL)
-            {
-                if (pnew->body == 1 && (pnew->aud - 300) < 100)
-                    cout
-                    << "Название Факультета - " << pnew->name << endl
-                    << "Номер аудитории - " << pnew->aud << endl
-                    << "Номер корпуса - " << pnew->body << endl
-                    << "Количество студентов - " << pnew->styd << endl
-                    << "ФИО декана - " << pnew->dek << endl
-                    << endl << endl;
-                pnew = pnew->next;
-            }
-            cout << "**********************************************" << endl;
-            break;
-
-            //Общее кол-во студентов
-        case 9:
-            pnew = Head;
-            while (pnew != NULL)
-            {
-                allstyd += pnew->styd;
-                pnew = pnew->next;
-            }
-            cout << "Общее количество студентов: " << allstyd << endl;
-            cout << "**********************************************" << endl;
-            break;
-
-            //Вывод мин и  мах
-        case 10:
-            cout << "Наибольшее и наименьшее количество студентов:" << endl;
-            pnew = Head;
-            while (pnew != NULL)
-            {
-                sh++;
-                if (pnew->styd > max)
-                {
-                    max1 = sh;
-                    max = pnew->styd;
-                }
-                if (pnew->styd < min)
-                {
-                    min1 = sh;
-                    min = pnew->styd;
-                }
-
-                pnew = pnew->next;
-            }
-            cout << "Наибольшее - " << max << " Наименьшее - " << min << endl;
-
-
-
-            while (pnew != NULL)
-            {
-                if (pnew->styd == max)
-                {
-                    cout
-                        << "Название Факультета - " << pnew->name << endl
-                        << "Номер аудитории - " << pnew->aud << endl
-                        << "Номер корпуса - " << pnew->body << endl
-                        << "Количество студентов - " << pnew->styd << endl
-                        << "ФИО декана - " << pnew->dek << endl << endl;
-                }
-                if (pnew->styd == min)
-                {
-                    cout
-                        << "Название Факультета - " << pnew->name << endl
-                        << "Номер аудитории - " << pnew->aud << endl
-                        << "Номер корпуса - " << pnew->body << endl
-                        << "Количество студентов - " << pnew->styd << endl
-                        << "ФИО декана - " << pnew->dek << endl << endl;
-                }
-                pnew = pnew->next;
-            }
-            cout << "**********************************************" << endl;
-            break;
-
-            //Вывод всего списка
-        case 11:
-            cout << endl << "Вывод списка факультетов" << endl;
-            pnew = Head;
-
-            while (pnew != NULL)
-            {
-                Fnumber++;
-                cout
-                    << "Факультет № " << Fnumber << endl
-                    << "Название Факультета - " << pnew->name << endl
-                    << "Номер аудитории - " << pnew->aud << endl
-                    << "Номер корпуса - " << pnew->body << endl
-                    << "Количество студентов - " << pnew->styd << endl
-                    << "ФИО декана - " << pnew->dek << endl << endl;
-                pnew = pnew->next;
-            }
-            cout << "**********************************************" << endl;
-            break;
-
-        }
-    } while (t != 0);
-}
+	} while (t != 0);
+};
