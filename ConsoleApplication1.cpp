@@ -132,7 +132,7 @@ PFaculty CinFaculty()
 }
 
 //Найти по имени
-PFaculty FindFacultyById(PFaculty& Head, string name)
+PFaculty FindFaculty(PFaculty& Head, string name)
 {
 	PFaculty pnew = Head;
 	do
@@ -271,11 +271,11 @@ int main()
 			{
 				while (!file.eof())
 				{
-					file >> name;
-					file >> body;
-					file >> aud;
-					file >> styd;
-					file >> dek;
+					file >> name; file.ignore(1);
+					file >> body; file.ignore(1);
+					file >> aud; file.ignore(1);
+					file >> styd; file.ignore(1);
+					file >> dek; file.ignore(1);
 
 					cout << "Название факультета - " << name << endl;
 					cout << "Номер корпуса - " << body << endl;
